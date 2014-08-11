@@ -1,0 +1,137 @@
+<html>
+<head>
+  <title>Do It to Do It</title>
+</head>
+<body>
+
+  <h1>This is a title</h1>
+
+  <h2>This is a sub title</h2>
+
+  <ul>
+    <li>one</li>
+    <li>two</li>
+    <li>three</li>
+    <li>four</li>
+    <li>five</li>
+    <li>six</li>
+  </ul>
+
+
+  <script>
+
+  var MD = function(sel) {
+
+    if (!(this instanceof MD)) return new MD(sel);
+
+    this.sel = sel;
+    this.name = 'MD';
+    this.collection = [];
+
+    if (!!this.sel) {
+      if (sel instanceof Node) {
+        this.collection = [sel];
+      } else {
+        this.collection = document.querySelectorAll(sel);
+      }
+    }
+
+    for (i = 0; i < this.collection.length; i++) {
+      this[i] = this.collection[i];
+    }
+
+    this.length = this.collection.length;
+
+    return this;
+
+  }
+
+  MD.prototype.get = function(n) {
+    // return node
+    return this.collection[n];
+  
+  }
+
+  MD.prototype.eq = function(n) {
+    // return node as MD object
+    return new MD(this.collection[n]);
+
+  }
+
+  MD.prototype.css = function(key,val) {
+
+    if (!!val) {
+      //set
+      this.each(function(idx,el) {
+        el.style[key] = val;
+      });
+    // for (i=0; i<this.collection.length; i++) {
+        // this.collection[i].style[key] = val;
+      // }
+    } else {
+      //get
+      return this.collection[0].style[key];
+    }
+
+    return this;
+
+  }
+
+  MD.prototype.attr = function(key,val) {
+
+    if (!!val) {
+      //set
+      this.each(function(idx,el) {
+        el[key] = val;
+      });
+    } else {
+      //get
+      return this.collection[0][key];
+    }
+
+    return this;
+
+  }
+
+  MD.prototype.each = function(cb) {
+
+    for (i=0; i<this.collection.length; i++) {
+      // callback first param is index, second is el
+      cb.call(this.collection[i], i, this.collection[i]);
+    }
+
+    return this;
+
+  }
+
+
+  MD.prototype.addClass = function(cn) {
+
+    this.removeClass(cn);
+    this.each(function(idx,el) {
+        el.className += ' ' + cn;
+    });
+
+    return this;
+
+  }
+
+  MD.prototype.removeClass = function(cn) {
+
+    this.each(function(idx,el) {
+      el.className = el.className.replace(cn, '');
+    });
+
+    return this;
+
+  }
+
+
+
+
+
+  </script>
+
+
+</body>
+</html>

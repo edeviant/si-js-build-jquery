@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Let's Build jQuery</title>
+  </head>
+  <body>
+    
+    <h1>Page Title</h1>
+
+    <p>only doing selector version (not $.fn), uses modern js, this covers JS you'll use while using jquery</p>
+
+    <p>important: optional variables in functions, short-circuit defaults, testing if variable exists, understanding what is going on under the hood, looking at the dom elements, array syntax for objects, using the console</p>
+
+    <ul>
+      <li>create empty class constructor, new/return this</li>
+      <li>return empty array for nothing, this.collection = []</li>
+      <li>create id selector</li>
+      <li>sniff for id</li>
+      <li>sniff for class</li>
+      <li>create querySelector selector</li>
+      <li>create array interface</li>
+      <li>create length property</li>
+      <li>remove new requirement</li>
+      <li>create add class with loop</li>
+      <li>create chain for add class</li>
+      <li>create each</li>
+      <li>update add class with each</li>
+      <li>create remove class</li>
+      <li>create css</li>
+      <li>create eq</li>
+      <li>create get</li>
+      <li>update constructor to support node or selector</li>
+      <li>create show and hide</li>
+    </ul>
+
+    <table>
+      <tr>
+        <th>jquery</th>
+        <th>javascript</th>
+      </tr>
+      <tr>
+        <td>$('#xyz')</td>
+        <td>document.getElementByID('xyz')</td>
+      </tr>
+      <tr>
+        <td>$('.xyz')</td>
+        <td>document.getElementsByClassName('xyz')</td>
+      </tr>
+      <tr>
+        <td>$('a')</td>
+        <td>document.getElementsByTagName('a')</td>
+      </tr>
+      <tr>
+        <td>$('*')</td>
+        <td>element.querySelectorAll</td>
+      </tr>
+      <tr>
+        <td>$(el)</td>
+        <td>el</td>
+      </tr>
+      <tr>
+        <td>$().each</td>
+        <td>for()</td>
+      </tr>
+      <tr>
+        <td>$().addClass</td>
+        <td>.className=</td>
+      </tr>
+      <tr>
+        <td>$().removeClass</td>
+        <td>.className</td>
+      </tr>
+      <tr>
+        <td>$().css()</td>
+        <td>el.style</td>
+      </tr>
+      <tr>
+        <td>$().eq(0)</td>
+        <td>element.querySelectorAll[0]</td>
+      </tr>
+      <tr>
+        <td>$().appendTo(el)</td>
+        <td>document.element.appendTo</td>
+      </tr>
+    </table>
+
+
+  <script>
+
+    // create constructor 
+    var SI = function(sel) {
+      // ensure we are a constructor
+      if (!(this instanceof SI)) return new SI(sel);
+      // ensure we have something to select
+      if (!!sel) {
+        // did we receive a node directly?
+        if (sel instanceof Node) {
+          this.collection = [sel];
+        } else {
+          // assume selector, grab selection
+          this.collection = document.querySelectorAll(sel);
+        }
+      } else {
+        // we didn't receive anything
+        this.collection = [];
+      }
+      // console.log(this.collection);
+      this.createArrayInterface();
+
+      // return our object
+      return this;
+    }
+
+    // creates length property and [d] interface
+    SI.prototype.createArrayInterface = function() {
+      // var i=0;
+      // while(!!this[i]) {
+      //   console.log(this[i]); 
+      //   delete this[i];
+      //   i++;
+      // }
+      for (i=0, j=this.collection.length; i<j; i++) {
+        this[i] = this.collection[i];
+      }
+      this.length = this.collection.length;
+    }
+
+    // create each method
+    SI.prototype.each = function(cb) {
+      cb = cb || function(a) { 
+        console.log(a);
+      };
+      for(i=0, j=this.length; i<j; i++) {
+        cb.call(this.collection[i], this.collection[i]);
+      }
+      return this;
+    }
+
+    SI.prototype.show = function() {
+      this.each(function(el) {
+        el.style.display = el.originalDisplay || 'block';
+      });
+      return this;
+    }
+
+    SI.prototype.hide = function() {
+      this.each(function(el) {
+        el.originalDisplay = getComputedStyle(el).getPropertyValue('display');
+        el.style.display = 'none';
+      });
+      return this;
+    }
+
+    SI.prototype.css = function(key,val) {
+      if (!!val) {
+        this.each(function(el) {
+          el.style[key] = val;
+          console.log(el.style);
+        });
+      } else {
+        return this[0].style[key];
+      }
+      return this;
+    }
+
+    SI.prototype.addClass = function(val) {
+      if (!!val) {
+        // remove it if it already exists
+        this.removeClass(val);
+        this.each(function(el) {
+          el.className = String.prototype.trim.call(el.className + ' ' + val);
+        });
+      }
+      return this;
+    }
+
+    SI.prototype.removeClass = function(val) {
+      if (!!val) {
+        this.each(function(el) {
+          el.className = String.prototype.trim.call(el.className.replace(val, ''));
+        });
+      }
+      return this;
+    }
+
+    SI.prototype.eq = function(w) {
+      return this[w];
+    }
+
+    SI.prototype.get = function(w) {
+      // just use the first one - make sure it's still an array
+      // this.collection = [this.collection[w]];
+      // reset the array interface
+      // this.createArrayInterface();
+      return new SI(this[w]);
+    }
+
+  </script>
+
+  </body>
+</html>
